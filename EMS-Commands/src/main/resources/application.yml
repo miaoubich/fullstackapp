@@ -1,0 +1,12 @@
+spring:
+ application: 
+  name: Employee-Management-System
+ 
+ datasource:
+  url: jdbc:postgresql://localhost:5432/cmd_empoyeedb
+  username: postgres
+  password: password
+ 
+ jpa:
+  hibernate:
+   ddl-auto: update
