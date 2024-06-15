@@ -1,13 +1,13 @@
 package net.miaoubich.service;
 
-import net.miaoubich.dao.EmployeeDao;
-import net.miaoubich.model.Employee;
+import net.miaoubich.dao.EmployeeRequest;
+import net.miaoubich.dao.EmployeeResponse;
 
 public interface EmployeeService {
 
-		Employee registerEmployee(EmployeeDao request);
+	EmployeeResponse registerEmployee(EmployeeRequest request);
 		
-		Employee updateEmployee(Integer id, EmployeeDao request);
+	EmployeeResponse updateEmployee(Integer id, EmployeeRequest request);
 		
 		void deleteEmployee(Integer id);
 }
