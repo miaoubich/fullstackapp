@@ -17,5 +17,20 @@ spring:
  jpa:
   show-sql: true
   hibernate:
-   ddl-auto: update  
- 
+   ddl-auto: update 
+   
+ kafka: 
+  template:
+   default-topic: employee-topic
+  consumer:
+   bootstrap-servers: localhost:9092
+   group-id: employee-group1
+   auto-offset-reset: earliest
+   key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+   value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+   
+   properties:
+    spring:
+     json:
+      trusted:
+       packages: net.miaoubich.event

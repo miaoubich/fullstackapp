@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.miaoubich.dao.EmployeeResponse;
+import net.miaoubich.event.EmployeeEvent;
 import net.miaoubich.exception.EmployeeCustomException;
 import net.miaoubich.model.Employee;
 import net.miaoubich.repository.EmployeeRepository;
@@ -24,11 +26,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<EmployeeResponse> getEmployees() {
 		log.info("Reading the list of employees!");
 		List<Employee> employees = employeeRepository.findAll();
-		List<EmployeeResponse> responseEmpList = employees.stream().map(emp -> EmployeeResponse.builder()
-																							.name(emp.getName())
-																							.email(emp.getEmail())
-																							.phoneNumber(emp.getPhoneNumber())
-																							.build()).toList();
+		List<EmployeeResponse> responseEmpList = employees.stream()
+				                                          .map(emp -> EmployeeResponse.builder()
+																					.name(emp.getName())
+																					.email(emp.getEmail())
+																					.phoneNumber(emp.getPhoneNumber())
+																					.build()).toList();
 		return responseEmpList;
 	}
 
@@ -40,5 +43,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 		BeanUtils.copyProperties(responseEmp, employee);
 		
 		return responseEmp;
+	}
+	
+	
+	@KafkaListener(topics = "employee-topic", groupId = "employee-group1")
+	public void processEmployeeEvents(EmployeeEvent event) {
+		Employee employee = event.getEmployee();
+		String type = event.getType();
+		
+		switch(type) {
+			case "Create Employee":
+				employeeRepository.save(employee);
+				break;
+			case "Update Employee":
+				Employee empExist = employeeRepository.findById(employee.getId()).get();
+				empExist.setName(employee.getName());
+				empExist.setEmail(employee.getEmail());
+				empExist.setPhoneNumber(employee.getPhoneNumber());
+				employeeRepository.save(empExist);
+				break;
+			case "Delete Employee":
+				employeeRepository.deleteById(employee.getId());
+				break;
+		}
 	}
 }

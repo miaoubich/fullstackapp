@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Value("${spring.kafka.template.default-topic}")
 	private String topic;
 	private final EmployeeRepository employeeRepository;
-	private KafkaTemplate<String, EmployeeEvent> kafkaTemplate;
+	private final KafkaTemplate<String, EmployeeEvent> kafkaTemplate;
 
 	@Override
 	public EmployeeResponse registerEmployee(EmployeeRequest request) {
@@ -40,6 +40,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		EmployeeResponse response = new EmployeeResponse();
 		BeanUtils.copyProperties(response, employee);
+		
+		log.info("employee: " + employee);
+		log.info("response: " + response);
 
 		return response;
 	}
@@ -56,7 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		empExists.setPhoneNumber(request.getPhoneNumber());
 		employeeRepository.save(empExists);
 
-		EmployeeEvent event = new EmployeeEvent("Create Employee", empExists);
+		EmployeeEvent event = new EmployeeEvent("Update Employee", empExists);
 		kafkaTemplate.send(topic, event);
 
 		log.info("Employee with empId = " + id + " successfully updated !");
@@ -78,7 +81,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			employeeRepository.deleteById(id);
 			log.info("Employee with empId = " + id + " successfully deleted.");
 
-			EmployeeEvent event = new EmployeeEvent("Create Employee", empExists);
+			EmployeeEvent event = new EmployeeEvent("Delete Employee", empExists);
 			kafkaTemplate.send(topic, event);
 		}
 	}
