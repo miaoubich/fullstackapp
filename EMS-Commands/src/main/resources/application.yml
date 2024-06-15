@@ -1,12 +1,23 @@
+server:
+ port: 8081
+
 spring:
  application: 
   name: Employee-Management-System
  
  datasource:
-  url: jdbc:postgresql://localhost:5432/cmd_empoyeedb
+  url: jdbc:postgresql://localhost:5432/empoyeedb
   username: postgres
   password: password
  
  jpa:
   hibernate:
    ddl-auto: update
+
+ kafka:
+  template:
+   default-topic: employee-topic
+  producer:
+   bootstrap-servers: localhost:9092
+   key-serializer: org.apache.kafka.common.serialization.StringSerializer
+   value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
