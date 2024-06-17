@@ -39,8 +39,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public EmployeeResponse getEmployeeById(Integer id) {
 		Employee employee = employeeRepository.findById(id).orElseThrow(
 				() -> new EmployeeCustomException("Employee Not Found !", "Employee_NOT_FOUND", HttpStatus.NOT_FOUND));
-		EmployeeResponse responseEmp = new EmployeeResponse();
-		BeanUtils.copyProperties(responseEmp, employee);
+		EmployeeResponse responseEmp = EmployeeResponse.builder()
+													   .name(employee.getName())
+													   .email(employee.getEmail())
+													   .phoneNumber(employee.getPhoneNumber())
+													   .build();
 		
 		return responseEmp;
 	}

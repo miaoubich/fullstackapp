@@ -38,12 +38,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		log.info("Employee registered successfully !");
 		
-		EmployeeResponse response = new EmployeeResponse();
-		BeanUtils.copyProperties(response, employee);
-		
-		log.info("employee: " + employee);
-		log.info("response: " + response);
-
+		EmployeeResponse response = EmployeeResponse.builder()
+													.name(employee.getName())
+													.email(employee.getEmail())
+													.phoneNumber(employee.getPhoneNumber())
+													.build();
 		return response;
 	}
 
@@ -64,8 +63,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		log.info("Employee with empId = " + id + " successfully updated !");
 		
-		EmployeeResponse response = new EmployeeResponse();
-		BeanUtils.copyProperties(response, empExists);
+		EmployeeResponse response = EmployeeResponse.builder()
+				.name(empExists.getName())
+				.email(empExists.getEmail())
+				.phoneNumber(empExists.getPhoneNumber())
+				.build();
 
 		return response;
 	}
